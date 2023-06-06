@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.PaperMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加考试试卷记录 -->
+	<insert id="addPaper" parameterType="paper">
+		insert into t_paper(subjectObj,examName,paperContent,addDate) values 
+		(#{subjectObj.subjectId},#{examName},#{paperContent},#{addDate})
+	</insert>
+
+	<!-- 按照查询条件分页查询考试试卷记录 -->
+	<select id="queryPaper" resultMap="paperMap" >
+		select t_paper.* from t_paper,t_subject ${where} and t_paper.subjectObj = t_subject.subjectId limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="paperMap" type="paper">
+        <id property="paperId" column="paperId" />
+        <association property="subjectObj" column="subjectObj" select="com.chengxusheji.mapper.SubjectMapper.getSubject" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有考试试卷记录 -->
+	<select id="queryPaperList" resultMap="paperMap" >
+		select t_paper.* from t_paper,t_subject ${where} and t_paper.subjectObj = t_subject.subjectId
+	</select>
+
+    <!-- 按照查询条件的考试试卷记录数 -->
+	<select id="queryPaperCount" resultType="int">
+		select count(*) from t_paper,t_subject ${where} and t_paper.subjectObj = t_subject.subjectId
+	</select>
+
+	<!-- 根据主键查询某个考试试卷记录 -->
+	<select id="getPaper" parameterType="int" resultMap="paperMap">
+		select * from t_paper where t_paper.paperId = #{paperId}
+	</select>
+
+	<!-- 更新考试试卷记录 -->
+	<update id="updatePaper" parameterType="paper">
+		update t_paper set subjectObj=#{subjectObj.subjectId},examName=#{examName},paperContent=#{paperContent},addDate=#{addDate} where paperId = #{paperId}
+	</update>
+
+	<!-- 删除考试试卷记录 -->
+	<delete id="deletePaper" parameterType="int">
+		delete from t_paper where paperId=#{paperId}
+	</delete>
+
+</mapper>

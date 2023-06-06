@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.CoachMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加教练记录 -->
+	<insert id="addCoach" parameterType="coach">
+		insert into t_coach(name,sex,coachPhoto,birthDate,telephone,email,coachDesc) values 
+		(#{name},#{sex},#{coachPhoto},#{birthDate},#{telephone},#{email},#{coachDesc})
+	</insert>
+
+	<!-- 按照查询条件分页查询教练记录 -->
+	<select id="queryCoach" resultMap="coachMap" >
+		select t_coach.* from t_coach ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="coachMap" type="coach">
+        <id property="coachId" column="coachId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有教练记录 -->
+	<select id="queryCoachList" resultMap="coachMap" >
+		select t_coach.* from t_coach ${where}
+	</select>
+
+    <!-- 按照查询条件的教练记录数 -->
+	<select id="queryCoachCount" resultType="int">
+		select count(*) from t_coach ${where}
+	</select>
+
+	<!-- 根据主键查询某个教练记录 -->
+	<select id="getCoach" parameterType="int" resultMap="coachMap">
+		select * from t_coach where t_coach.coachId = #{coachId}
+	</select>
+
+	<!-- 更新教练记录 -->
+	<update id="updateCoach" parameterType="coach">
+		update t_coach set name=#{name},sex=#{sex},coachPhoto=#{coachPhoto},birthDate=#{birthDate},telephone=#{telephone},email=#{email},coachDesc=#{coachDesc} where coachId = #{coachId}
+	</update>
+
+	<!-- 删除教练记录 -->
+	<delete id="deleteCoach" parameterType="int">
+		delete from t_coach where coachId=#{coachId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.CarMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加车辆记录 -->
+	<insert id="addCar" parameterType="car">
+		insert into t_car(carNo,carName,carPhoto,shitWay,onCardDate,carDesc,carState,carPlace) values 
+		(#{carNo},#{carName},#{carPhoto},#{shitWay},#{onCardDate},#{carDesc},#{carState.stateId},#{carPlace})
+	</insert>
+
+	<!-- 按照查询条件分页查询车辆记录 -->
+	<select id="queryCar" resultMap="carMap" >
+		select t_car.* from t_car,t_carState ${where} and t_car.carState = t_carState.stateId limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="carMap" type="car">
+        <id property="carNo" column="carNo" />
+        <association property="carState" column="carState" select="com.chengxusheji.mapper.CarStateMapper.getCarState" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有车辆记录 -->
+	<select id="queryCarList" resultMap="carMap" >
+		select t_car.* from t_car,t_carState ${where} and t_car.carState = t_carState.stateId
+	</select>
+
+    <!-- 按照查询条件的车辆记录数 -->
+	<select id="queryCarCount" resultType="int">
+		select count(*) from t_car,t_carState ${where} and t_car.carState = t_carState.stateId
+	</select>
+
+	<!-- 根据主键查询某个车辆记录 -->
+	<select id="getCar" parameterType="string" resultMap="carMap">
+		select * from t_car where t_car.carNo = #{carNo}
+	</select>
+
+	<!-- 更新车辆记录 -->
+	<update id="updateCar" parameterType="car">
+		update t_car set carName=#{carName},carPhoto=#{carPhoto},shitWay=#{shitWay},onCardDate=#{onCardDate},carDesc=#{carDesc},carState=#{carState.stateId},carPlace=#{carPlace} where carNo = #{carNo}
+	</update>
+
+	<!-- 删除车辆记录 -->
+	<delete id="deleteCar" parameterType="string">
+		delete from t_car where carNo=#{carNo}
+	</delete>
+
+</mapper>

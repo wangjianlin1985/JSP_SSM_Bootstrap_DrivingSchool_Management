@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.SubjectMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加科目记录 -->
+	<insert id="addSubject" parameterType="subject">
+		insert into t_subject(subjectName,carType,driveLevel) values 
+		(#{subjectName},#{carType},#{driveLevel})
+	</insert>
+
+	<!-- 按照查询条件分页查询科目记录 -->
+	<select id="querySubject" resultMap="subjectMap" >
+		select t_subject.* from t_subject ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="subjectMap" type="subject">
+        <id property="subjectId" column="subjectId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有科目记录 -->
+	<select id="querySubjectList" resultMap="subjectMap" >
+		select t_subject.* from t_subject ${where}
+	</select>
+
+    <!-- 按照查询条件的科目记录数 -->
+	<select id="querySubjectCount" resultType="int">
+		select count(*) from t_subject ${where}
+	</select>
+
+	<!-- 根据主键查询某个科目记录 -->
+	<select id="getSubject" parameterType="int" resultMap="subjectMap">
+		select * from t_subject where t_subject.subjectId = #{subjectId}
+	</select>
+
+	<!-- 更新科目记录 -->
+	<update id="updateSubject" parameterType="subject">
+		update t_subject set subjectName=#{subjectName},carType=#{carType},driveLevel=#{driveLevel} where subjectId = #{subjectId}
+	</update>
+
+	<!-- 删除科目记录 -->
+	<delete id="deleteSubject" parameterType="int">
+		delete from t_subject where subjectId=#{subjectId}
+	</delete>
+
+</mapper>

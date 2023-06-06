@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.CarStateMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加车辆状态记录 -->
+	<insert id="addCarState" parameterType="carState">
+		insert into t_carState(stateName) values 
+		(#{stateName})
+	</insert>
+
+	<!-- 按照查询条件分页查询车辆状态记录 -->
+	<select id="queryCarState" resultMap="carStateMap" >
+		select t_carState.* from t_carState ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="carStateMap" type="carState">
+        <id property="stateId" column="stateId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有车辆状态记录 -->
+	<select id="queryCarStateList" resultMap="carStateMap" >
+		select t_carState.* from t_carState ${where}
+	</select>
+
+    <!-- 按照查询条件的车辆状态记录数 -->
+	<select id="queryCarStateCount" resultType="int">
+		select count(*) from t_carState ${where}
+	</select>
+
+	<!-- 根据主键查询某个车辆状态记录 -->
+	<select id="getCarState" parameterType="int" resultMap="carStateMap">
+		select * from t_carState where t_carState.stateId = #{stateId}
+	</select>
+
+	<!-- 更新车辆状态记录 -->
+	<update id="updateCarState" parameterType="carState">
+		update t_carState set stateName=#{stateName} where stateId = #{stateId}
+	</update>
+
+	<!-- 删除车辆状态记录 -->
+	<delete id="deleteCarState" parameterType="int">
+		delete from t_carState where stateId=#{stateId}
+	</delete>
+
+</mapper>
